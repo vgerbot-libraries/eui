@@ -22,6 +22,8 @@ import {
 } from '../../services';
 import { EuiThemeAmsterdam } from '../../themes';
 import { EuiCacheProvider } from './cache';
+import { EuiPortalInsertion } from '../portal/types';
+import { PortalProvider } from '../portal/portal.provider';
 
 const isEmotionCacheObject = (
   obj: EmotionCache | Object
@@ -61,6 +63,7 @@ export interface EuiProviderProps<T>
         global?: EmotionCache;
         utility?: EmotionCache;
       };
+  portal_insert?: EuiPortalInsertion;
 }
 
 export const EuiProvider = <T extends {} = {}>({
@@ -71,6 +74,7 @@ export const EuiProvider = <T extends {} = {}>({
   colorMode,
   modify,
   children,
+  portal_insert,
 }: PropsWithChildren<EuiProviderProps<T>>) => {
   let defaultCache;
   let globalCache;
@@ -113,7 +117,13 @@ export const EuiProvider = <T extends {} = {}>({
             />
           </>
         )}
-        <CurrentEuiBreakpointProvider>{children}</CurrentEuiBreakpointProvider>
+        <CurrentEuiBreakpointProvider>
+          {portal_insert ? (
+            <PortalProvider insert={portal_insert}>{children}</PortalProvider>
+          ) : (
+            children
+          )}
+        </CurrentEuiBreakpointProvider>
       </EuiThemeProvider>
     </EuiCacheProvider>
   );
